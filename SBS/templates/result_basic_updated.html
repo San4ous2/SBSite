@@ -1,0 +1,279 @@
+{% extends 'base.html' %}
+{% block content %}
+<style>
+    :root { --navy: #1a335d; --gold: #f59e0b; }
+    .upgrade-card {
+        background: linear-gradient(135deg, #1a335d 0%, #2c4a7c 100%);
+        border-radius: 24px;
+        padding: 40px;
+        color: white;
+        position: relative;
+        overflow: hidden;
+    }
+    .upgrade-card::before {
+        content: '';
+        position: absolute;
+        top: -50%;
+        right: -20%;
+        width: 300px;
+        height: 300px;
+        background: rgba(255,255,255,0.05);
+        border-radius: 50%;
+    }
+    .feature-check {
+        display: flex;
+        align-items: start;
+        margin-bottom: 16px;
+    }
+    .feature-check .icon {
+        background: rgba(255,255,255,0.2);
+        border-radius: 50%;
+        width: 28px;
+        height: 28px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-right: 12px;
+        flex-shrink: 0;
+    }
+    .btn-upgrade {
+        background: white;
+        color: var(--navy);
+        padding: 18px 50px;
+        border-radius: 50px;
+        font-weight: 700;
+        font-size: 1.1rem;
+        transition: 0.3s;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        border: none;
+    }
+    .btn-upgrade:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 15px 40px rgba(0,0,0,0.3);
+        color: var(--navy);
+    }
+    .price-tag {
+        font-size: 3rem;
+        font-weight: 800;
+        line-height: 1;
+    }
+    .badge-free {
+        background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+        color: white;
+        padding: 6px 16px;
+        border-radius: 50px;
+        font-weight: 700;
+        font-size: 0.7rem;
+        letter-spacing: 0.5px;
+    }
+    .btn-pdf {
+        background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+        color: white;
+        padding: 12px 30px;
+        border-radius: 12px;
+        border: none;
+        font-weight: 600;
+        transition: 0.3s;
+    }
+    .btn-pdf:hover {
+        background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
+        color: white;
+        transform: translateY(-2px);
+    }
+</style>
+
+<div class="container mt-5" style="max-width: 800px;">
+    <!-- Results Card -->
+    <div class="card border-0 shadow-sm text-center py-5 mb-4" style="border-radius: 24px;">
+        <div class="mb-3">
+            <span class="badge-free">BEZMAKSAS VERSIJA</span>
+        </div>
+        <h5 class="text-muted fw-bold text-uppercase mb-3">Jūsu rezultāts</h5>
+        <div class="display-1 fw-bold mb-3" style="color: #1a335d;">{{ raw_score }}<span class="fs-4 text-muted">/12</span></div>
+
+        <div class="px-5 mb-4">
+            <div class="progress" style="height: 10px; border-radius: 20px;">
+                <div class="progress-bar" style="width: {{ score }}%; background-color: {% if score >= 75 %}#10b981{% elif score >= 42 %}#f59e0b{% else %}#ef4444{% endif %};"></div>
+            </div>
+        </div>
+
+        <div>
+            <span class="badge rounded-pill px-4 py-3 fw-bold fs-6"
+                  style="background-color: {% if score >= 75 %}#d1fae5{% elif score >= 42 %}#fef3c7{% else %}#fee2e2{% endif %};
+                         color: {% if score >= 75 %}#065f46{% elif score >= 42 %}#92400e{% else %}#991b1b{% endif %};">
+                {{ level_text }}
+            </span>
+        </div>
+
+        <p class="text-muted mt-4 mx-auto" style="max-width: 500px;">
+            {{ level_description }}
+        </p>
+    </div>
+
+    <!-- PDF Export for Basic Version -->
+    <div class="card border-0 shadow-sm p-4 mb-4" style="border-radius: 24px; background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);">
+        <div class="row align-items-center">
+            <div class="col-md-8">
+                <h6 class="fw-bold mb-2" style="color: var(--navy);">📄 Saglabājiet rezultātus</h6>
+                <p class="text-muted small mb-3 mb-md-0">
+                    Lejupielādējiet PDF dokumentu ar jūsu bezmaksas testa rezultātiem.
+                </p>
+            </div>
+            <div class="col-md-4 text-end">
+                <a href="/export/pdf/basic/" class="btn btn-pdf btn-sm">
+                    Lejupielādēt PDF
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Upgrade Offer Card -->
+    <div class="upgrade-card mb-4 position-relative">
+        <div class="row align-items-center">
+            <div class="col-lg-7">
+                <h3 class="fw-bold mb-3">🚀 Gatavs dziļākai analīzei?</h3>
+                <p class="mb-4 opacity-90">Paplašinātā versija ietver:</p>
+                
+                <div class="feature-check">
+                    <div class="icon">✓</div>
+                    <div>
+                        <strong>Detalizēta finanšu analīze</strong>
+                        <div class="small opacity-75">17 jautājumu aptauja ar 65 punktu sistēmu</div>
+                    </div>
+                </div>
+
+                <div class="feature-check">
+                    <div class="icon">✓</div>
+                    <div>
+                        <strong>AI personalizēti ieteikumi</strong>
+                        <div class="small opacity-75">Mākslīgā intelekta ģenerēti padomu uz jūsu situāciju</div>
+                    </div>
+                </div>
+
+                <div class="feature-check">
+                    <div class="icon">✓</div>
+                    <div>
+                        <strong>Investīciju portfeļa analīze</strong>
+                        <div class="small opacity-75">Izvērtējums par jūsu aktīvajiem ieguldījumiem</div>
+                    </div>
+                </div>
+
+                <div class="feature-check">
+                    <div class="icon">✓</div>
+                    <div>
+                        <strong>Izdevumu struktūras pārskats</strong>
+                        <div class="small opacity-75">Analīze par tēriņiem un optimizācijas iespējām</div>
+                    </div>
+                </div>
+
+                <div class="feature-check mb-4">
+                    <div class="icon">✓</div>
+                    <div>
+                        <strong>Vēsturiskie un prognozes dati</strong>
+                        <div class="small opacity-75">Ieņēmumu/izdevumu tendences un nākotnes prognozes</div>
+                    </div>
+                </div>
+
+                <div class="feature-check mb-4">
+                    <div class="icon">✓</div>
+                    <div>
+                        <strong>Premium PDF eksports</strong>
+                        <div class="small opacity-75">Profesionāli noformēts pārskats ar visiem datiem</div>
+                    </div>
+                </div>
+
+                <button id="checkoutButton" class="btn btn-upgrade">
+                    Iegādāties Pro versiju
+                    <span class="ms-2">→</span>
+                </button>
+            </div>
+
+            <div class="col-lg-5 text-center mt-4 mt-lg-0">
+                <div class="p-4 rounded-4" style="background: rgba(255,255,255,0.1); backdrop-filter: blur(10px);">
+                    <div class="small opacity-75 mb-2">SPECIĀLS PIEDĀVĀJUMS</div>
+                    <div class="price-tag">€67</div>
+                    <div class="small opacity-75 mt-2">Vienreizējs maksājums</div>
+                    <div class="mt-3 pt-3 border-top border-white border-opacity-25">
+                        <div class="small">
+                            <div class="opacity-75">✓ Mūža piekļuve rezultātiem</div>
+                            <div class="opacity-75">✓ Premium PDF eksports</div>
+                            <div class="opacity-75">✓ AI personalizācija</div>
+                            <div class="opacity-75">✓ Atjauninājumi bez maksas</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Basic Recommendations -->
+    <div class="card border-0 shadow-sm p-4 p-md-5 mb-5" style="border-radius: 24px;">
+        <h4 class="fw-bold mb-4" style="color: #1a335d;">Pamata ieteikumi</h4>
+        
+        {% if basic_tips %}
+            {% for tip in basic_tips %}
+            <div class="d-flex align-items-start mb-3">
+                <div class="flex-shrink-0 d-flex align-items-center justify-content-center text-white fw-bold rounded-circle"
+                     style="width: 30px; height: 30px; background-color: #1a335d;">
+                    {{ forloop.counter }}
+                </div>
+                <div class="ms-3">
+                    <p class="mb-0 text-muted">{{ tip }}</p>
+                </div>
+            </div>
+            {% endfor %}
+        {% else %}
+            <p class="text-muted">Izvēlieties paplašināto versiju, lai saņemtu personalizētus ieteikumus.</p>
+        {% endif %}
+
+        <div class="alert alert-info mt-4 d-flex align-items-start" style="border-radius: 16px; border-left: 4px solid #3b82f6;">
+            <div class="me-3 fs-4">💡</div>
+            <div>
+                <strong>Vēlaties vairāk?</strong>
+                <div class="small mt-1">Paplašinātā versija piedāvā AI ģenerētus, personalizētus padomus, kas ņem vērā visu jūsu finanšu situāciju.</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="text-center mb-5">
+        <a href="/" class="btn btn-outline-dark px-5 py-3 rounded-pill fw-bold me-3">↻ Sākt no jauna</a>
+    </div>
+</div>
+
+<!-- Stripe Checkout Script -->
+<script src="https://js.stripe.com/v3/"></script>
+<script>
+    const stripe = Stripe('{{ STRIPE_PUBLISHABLE_KEY }}');  // Add this to your context
+    
+    document.getElementById('checkoutButton').addEventListener('click', async () => {
+        try {
+            const response = await fetch('/payment/create-checkout-session/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': '{{ csrf_token }}'
+                }
+            });
+            
+            const session = await response.json();
+            
+            if (session.error) {
+                alert('Kļūda: ' + session.error);
+                return;
+            }
+            
+            // Redirect to Stripe Checkout
+            const result = await stripe.redirectToCheckout({
+                sessionId: session.sessionId
+            });
+            
+            if (result.error) {
+                alert(result.error.message);
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            alert('Notika kļūda. Lūdzu, mēģiniet vēlreiz.');
+        }
+    });
+</script>
+{% endblock %}

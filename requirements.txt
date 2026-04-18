@@ -1,0 +1,8 @@
+Django==5.2.10
+stripe
+reportlab
+google-genai
+gunicorn
+whitenoise
+psycopg2-binary
+dj-database-url

@@ -1,0 +1,424 @@
+{% extends 'base.html' %}
+{% block content %}
+<style>
+    :root { --navy: #1a335d; --hover-navy: #2c4a7c; --gold: #f59e0b; }
+    .step { display: none; }
+    .step.active { display: block; animation: slideUp 0.4s ease-out; }
+    @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+    .card-q { border-radius: 20px; border: 1px solid rgba(0,0,0,0.05); box-shadow: 0 10px 40px rgba(26, 51, 93, 0.08); padding: 40px; background: white; }
+    .q-num { background: var(--navy); color: white; border-radius: 50%; width: 32px; height: 32px; display: inline-flex; align-items: center; justify-content: center; font-weight: 700; font-size: 14px; margin-right: 12px; }
+    .btn-navy { background: var(--navy); color: white; border-radius: 12px; padding: 12px 40px; border: none; font-weight: 600; transition: 0.3s; }
+    .btn-navy:hover { background: var(--hover-navy); color: white; transform: translateY(-2px); }
+    .form-label-custom { font-size: 0.85rem; color: #64748b; font-weight: 600; margin-bottom: 6px; display: block; }
+    .form-control, .form-select { border-radius: 10px; padding: 12px; border: 1px solid #e2e8f0; }
+    #loadingOverlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255, 255, 255, 0.95); z-index: 9999; display: none; flex-direction: column; align-items: center; justify-content: center; }
+    .badge-pro { background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); color: white; padding: 8px 20px; border-radius: 50px; font-weight: 700; font-size: 0.75rem; letter-spacing: 0.5px; }
+    .hover-card { transition: all 0.2s; cursor: pointer; }
+    .hover-card:hover { background-color: #f8fafc; border-color: var(--navy) !important; transform: translateY(-2px); }
+</style>
+
+<div id="loadingOverlay">
+    <div class="spinner-border text-primary mb-3" role="status" style="width: 3rem; height: 3rem;"></div>
+    <h4 class="fw-bold" style="color: var(--navy);">Notiek datu analīze...</h4>
+    <p class="text-muted">Ģenerējam AI ieteikumus...</p>
+</div>
+
+<div class="container mt-4" style="max-width: 750px;">
+    <div class="text-center mb-4">
+        <span class="badge-pro">✨ PRO VERSIJA</span>
+        <h2 class="mt-3 fw-bold" style="color: var(--navy);">Finanšu Pratības Novērtējums</h2>
+        <p class="text-muted">17 detalizēti jautājumi • AI personalizēti ieteikumi</p>
+    </div>
+
+    <div class="d-flex justify-content-between mb-2 px-1">
+        <span class="text-muted small fw-bold" id="step-label">Jautājums 1 no 15</span>
+        <span class="text-muted small fw-bold" id="percent-label">7%</span>
+    </div>
+    <div class="progress mb-5" style="height: 8px; border-radius: 10px; background-color: #f1f5f9;">
+        <div id="p-bar" class="progress-bar" style="background-color: var(--navy); width: 7%; transition: width 0.4s;"></div>
+    </div>
+
+    <form id="quizForm" method="POST">
+        {% csrf_token %}
+
+        <div class="step active card card-q">
+            <div class="d-flex align-items-center mb-4 text-muted small fw-bold"><span class="q-num">1</span> VALŪTA</div>
+            <h4 class="mb-4 fw-bold">Kādā valūtā vēlaties veikt aprēķinus?</h4>
+            <select name="currency" class="form-select validate" required>
+                <option value="">Izvēlieties...</option>
+                <option value="EUR" selected>Euro (€)</option>
+                <option value="USD">USD ($)</option>
+                <option value="GBP">GBP (£)</option>
+                <option value="CNY">CNY (¥)</option>
+            </select>
+        </div>
+
+        <div class="step card card-q">
+            <div class="d-flex align-items-center mb-4 text-muted small fw-bold"><span class="q-num">2</span> VECUMA GRUPA</div>
+            <h4 class="mb-4 fw-bold">Norādiet jūsu vecuma grupu:</h4>
+            <select name="age_group" class="form-select validate" required>
+                <option value="">Izvēlieties...</option>
+                <option value="under_18">Līdz 18 gadiem</option>
+                <option value="18_30">18-30 gadi</option>
+                <option value="31_40">31-40 gadi</option>
+                <option value="41_50">41-50 gadi</option>
+                <option value="51_65">51-65 gadi</option>
+                <option value="65_plus">65+ gadi</option>
+            </select>
+        </div>
+
+        <div class="step card card-q">
+            <div class="d-flex align-items-center mb-4 text-muted small fw-bold"><span class="q-num">3</span> MĒRĶIS</div>
+            <h4 class="mb-4 fw-bold">Kāds ir Jūsu galvenais finansiālais mērķis?</h4>
+            <select name="goal" class="form-select validate" required>
+                <option value="">Izvēlieties...</option>
+                <option value="emergency">Drošības spilvens</option>
+                <option value="freedom">Finansiālā brīvība</option>
+                <option value="purchase">Liels pirkums</option>
+                <option value="retirement">Uzkrājums vecumdienām</option>
+            </select>
+        </div>
+
+        <div class="step card card-q">
+            <div class="d-flex align-items-center mb-4 text-muted small fw-bold"><span class="q-num">4</span> IEŅĒMUMI</div>
+            <h4 class="mb-4 fw-bold">Jūsu kopējie mēneša ieņēmumi:</h4>
+            <input type="number" id="income_total" name="income" class="form-control validate" placeholder="0" required min="0" step="0.01">
+            <small class="text-muted mt-2 d-block">Ievadiet summu Jūsu izvēlētajā valūtā</small>
+        </div>
+
+        <div class="step card card-q">
+            <div class="d-flex align-items-center mb-4 text-muted small fw-bold"><span class="q-num">5</span> IEŅĒMUMU AVOTI</div>
+            <h4 class="mb-4 fw-bold">Norādiet summas no katra ieņēmuma veida:</h4>
+            <div class="alert alert-info small py-2 mb-3">
+                <strong>💡 Padoms:</strong> Summai jāsakrīt ar kopējiem ieņēmumiem (iepriekšējais jautājums)
+            </div>
+            <div class="alert alert-warning small py-2" id="income_alert" style="display:none;">Summa nesakrīt ar kopējiem ienākumiem!</div>
+            <div class="row g-3 income-group">
+                <div class="col-12"><label class="form-label-custom">💼 Darba alga</label><input type="number" name="i_alga" class="form-control sum-inc" placeholder="0" min="0" step="0.01"></div>
+                <div class="col-12"><label class="form-label-custom">🎁 Prēmijas / Bonusi</label><input type="number" name="i_prem" class="form-control sum-inc" placeholder="0" min="0" step="0.01"></div>
+                <div class="col-12"><label class="form-label-custom">📈 Dividendes</label><input type="number" name="i_div" class="form-control sum-inc" placeholder="0" min="0" step="0.01"></div>
+                <div class="col-12"><label class="form-label-custom">🏠 Īre / Procenti no mājas</label><input type="number" name="i_proc" class="form-control sum-inc" placeholder="0" min="0" step="0.01"></div>
+                <div class="col-12"><label class="form-label-custom">₿ Crypto ienākumi</label><input type="number" name="i_crypto" class="form-control sum-inc" placeholder="0" min="0" step="0.01"></div>
+                <div class="col-12"><label class="form-label-custom">🏦 Depozīts bankā</label><input type="number" name="i_deposit" class="form-control sum-inc" placeholder="0" min="0" step="0.01"></div>
+                <div class="col-12"><label class="form-label-custom">🎁 Sociālie pabalsti/pensijas</label><input type="number" name="i_social" class="form-control sum-inc" placeholder="0" min="0" step="0.01"></div>
+            </div>
+        </div>
+
+        <div class="step card card-q">
+            <div class="d-flex align-items-center mb-4 text-muted small fw-bold"><span class="q-num">6</span> IZDEVUMI</div>
+            <h4 class="mb-4 fw-bold">Jūsu kopējie mēneša izdevumi:</h4>
+            <input type="number" id="expenses_total" name="expenses" class="form-control validate" placeholder="0" required min="0" step="0.01">
+            <small class="text-muted mt-2 d-block">Iekļaujiet visus regulāros izdevumus</small>
+        </div>
+
+        <div class="step card card-q">
+            <div class="d-flex align-items-center mb-4 text-muted small fw-bold"><span class="q-num">7</span> IZDEVUMU STRUKTŪRA</div>
+            <h4 class="mb-4 fw-bold">Sadaliet izdevumus pa kategorijām:</h4>
+            <div class="alert alert-info small py-2 mb-3">
+                <strong>💡 Padoms:</strong> Summai jāsakrīt ar kopējiem izdevumiem
+            </div>
+            <div class="alert alert-warning small py-2" id="expenses_alert" style="display:none;">Summa nesakrīt ar kopējiem izdevumiem!</div>
+            <div class="mb-3">
+                <label class="form-label-custom">🏡 Pirmā nepieciešamība</label>
+                <small class="d-block text-muted mb-2" style="font-size: 0.75rem;">Komunālie, pārtika, zāles, transports, drēbes</small>
+                <input type="number" name="exp_pnp" class="form-control validate sum-exp" placeholder="0" min="0" step="0.01">
+            </div>
+            <div class="mb-3">
+                <label class="form-label-custom">🎮 Izklaide</label>
+                <small class="d-block text-muted mb-2" style="font-size: 0.75rem;">Sports, kino, abonementi, restorāni</small>
+                <input type="number" name="exp_fun" class="form-control validate sum-exp" placeholder="0" min="0" step="0.01">
+            </div>
+            <div class="mb-3">
+                <label class="form-label-custom">📊 Investīcijas</label>
+                <small class="d-block text-muted mb-2" style="font-size: 0.75rem;">Akcijas, fondi, uzkrājumi</small>
+                <input type="number" name="exp_inv" class="form-control validate sum-exp" placeholder="0" min="0" step="0.01">
+            </div>
+        </div>
+
+        <div class="step card card-q">
+            <div class="d-flex align-items-center mb-4 text-muted small fw-bold"><span class="q-num">8</span> INVESTĪCIJU PORTFELIS</div>
+            <h4 class="mb-4 fw-bold">Jūsu investīciju struktūra (uzkrātā summa):</h4>
+            <small class="text-muted d-block mb-3">Ja neinvestējat, atstājiet nulles</small>
+            <div class="row g-3">
+                <div class="col-6"><label class="form-label-custom">📈 Akcijas</label><input type="number" name="v_akc" class="form-control" placeholder="0" min="0" step="0.01"></div>
+                <div class="col-6"><label class="form-label-custom">📊 ETF / Fondi</label><input type="number" name="v_etf" class="form-control" placeholder="0" min="0" step="0.01"></div>
+                <div class="col-6"><label class="form-label-custom">🏦 Obligācijas</label><input type="number" name="v_obl" class="form-control" placeholder="0" min="0" step="0.01"></div>
+                <div class="col-6"><label class="form-label-custom">₿ Crypto / Citi</label><input type="number" name="v_crypto" class="form-control" placeholder="0" min="0" step="0.01"></div>
+            </div>
+        </div>
+
+        <div class="step card card-q">
+            <div class="d-flex align-items-center mb-4 text-muted small fw-bold"><span class="q-num">9</span> VĒSTURISKĀ ANALĪZE</div>
+            <h4 class="mb-4 fw-bold">Vidējie mēneša ieņēmumi pēdējā gadā:</h4>
+            <input type="number" name="avg_inc" class="form-control validate" placeholder="0" required min="0" step="0.01">
+            <small class="text-muted mt-2 d-block">Aptuveni aprēķiniet vidējo summu</small>
+        </div>
+
+        <div class="step card card-q">
+            <div class="d-flex align-items-center mb-4 text-muted small fw-bold"><span class="q-num">10</span> VĒSTURISKĀ ANALĪZE</div>
+            <h4 class="mb-4 fw-bold">Vidējie mēneša izdevumi pēdējā gadā:</h4>
+            <input type="number" name="avg_exp" class="form-control validate" placeholder="0" required min="0" step="0.01">
+            <small class="text-muted mt-2 d-block">Aptuveni aprēķiniet vidējo summu</small>
+        </div>
+
+        <div class="step card card-q">
+            <div class="d-flex align-items-center mb-4 text-muted small fw-bold"><span class="q-num">11</span> NĀKOTNES PROGNOZE</div>
+            <h4 class="mb-4 fw-bold">Kāda Jūs prognozejāt būs Jūsu ieņēmumu tendence?</h4>
+            <select name="inc_trend" class="form-select validate" required>
+                <option value="">Izvēlieties...</option>
+                <option value="aug">📈 Palielināsies (paaugstinājums, bonusi)</option>
+                <option value="sta">➡️ Stabila (bez būtiskām izmaiņām)</option>
+                <option value="maz">📉 Samazināsies (darba maiņa, pensija)</option>
+            </select>
+        </div>
+
+        <div class="step card card-q">
+            <div class="d-flex align-items-center mb-4 text-muted small fw-bold"><span class="q-num">12</span> NĀKOTNES PROGNOZE</div>
+            <h4 class="mb-4 fw-bold">Kāda Jūs prognozejāt būs Jūsu izdevumu tendence?</h4>
+            <select name="exp_trend" class="form-select validate" required>
+                <option value="">Izvēlieties...</option>
+                <option value="maz">📉 Samazināsies (ekonomija, optimizācija)</option>
+                <option value="sta">➡️ Stabila (bez būtiskām izmaiņām)</option>
+                <option value="aug">📈 Palielināsies (ģimene, mājoklis)</option>
+            </select>
+        </div>
+
+        <div class="step card card-q">
+            <div class="d-flex align-items-center mb-4 text-muted small fw-bold"><span class="q-num">13</span> AIZŅĒMUMI</div>
+            <h4 class="mb-4 fw-bold">Vai Jums ir kādi aizņēmumi?</h4>
+            <div class="d-grid gap-3">
+                <label class="d-flex align-items-center p-4 border rounded-3 cursor-pointer hover-card">
+                    <input type="radio" name="has_loan" value="ne" class="form-check-input me-3" style="width: 20px; height: 20px;" required>
+                    <div>
+                        <div class="fw-bold">Nē, man nav aizņēmumu</div>
+                        <small class="text-muted">Man ir brīvas finanses bez kredītsaistībām</small>
+                    </div>
+                </label>
+                <label class="d-flex align-items-center p-4 border rounded-3 cursor-pointer hover-card">
+                    <input type="radio" name="has_loan" value="ja" class="form-check-input me-3" style="width: 20px; height: 20px;">
+                    <div>
+                        <div class="fw-bold">Jā, man ir aizņēmumi</div>
+                        <small class="text-muted">Hipotēka, auto kredīts, personīgais aizdevums u.c.</small>
+                    </div>
+                </label>
+            </div>
+        </div>
+
+        <div class="step card card-q">
+            <div class="d-flex align-items-center mb-4 text-muted small fw-bold"><span class="q-num">14</span> DROŠĪBAS SPILVENS</div>
+            <h4 class="mb-4 fw-bold">Vai jums ir drošības spilvens?</h4>
+            <div class="d-grid gap-3 mb-4">
+                <label class="d-flex align-items-center p-4 border rounded-3 cursor-pointer hover-card">
+                    <input type="radio" name="has_safety_cushion" value="ja" class="form-check-input me-3" style="width: 20px; height: 20px;" onchange="toggleSafetyCushion()" required>
+                    <div>
+                        <div class="fw-bold">Jā, man ir drošības spilvens</div>
+                        <small class="text-muted">Man ir uzkrājumi neparedzētiem gadījumiem</small>
+                    </div>
+                </label>
+                <label class="d-flex align-items-center p-4 border rounded-3 cursor-pointer hover-card">
+                    <input type="radio" name="has_safety_cushion" value="ne" class="form-check-input me-3" style="width: 20px; height: 20px;" onchange="toggleSafetyCushion()">
+                    <div>
+                        <div class="fw-bold">Nē, man nav drošības spilvena</div>
+                        <small class="text-muted">Pagaidām nav izveidojis uzkrājumus</small>
+                    </div>
+                </label>
+            </div>
+            <div id="safety_cushion_field" style="display: none;">
+                <label class="form-label-custom">Drošības spilvena summa</label>
+                <input type="number" name="safety_cushion" class="form-control" placeholder="0" min="0" step="0.01">
+                <small class="text-muted mt-2 d-block">Norādiet kopējo drošības spilvena summu</small>
+            </div>
+        </div>
+
+        <div class="step card card-q">
+            <div class="d-flex align-items-center mb-4 text-muted small fw-bold"><span class="q-num">15</span> KREDĪTU VEIDS</div>
+            <h4 class="mb-4 fw-bold">Kāda veida aizdevumi Jums ir?</h4>
+            <div class="d-grid gap-3">
+                <label class="d-flex align-items-center p-4 border rounded-3 cursor-pointer hover-card">
+                    <input type="radio" name="loan_type" value="nav" class="form-check-input me-3" style="width: 20px; height: 20px;" required>
+                    <div>
+                        <div class="fw-bold">Nav aizdevumu</div>
+                        <small class="text-muted">Esmu bez kredītsaistībām</small>
+                    </div>
+                </label>
+                <label class="d-flex align-items-center p-4 border rounded-3 cursor-pointer hover-card">
+                    <input type="radio" name="loan_type" value="ilg" class="form-check-input me-3" style="width: 20px; height: 20px;">
+                    <div>
+                        <div class="fw-bold">Ilgtermiņa kredīts</div>
+                        <small class="text-muted">Hipotēka, auto līzings (vairāk nekā 1 gads)</small>
+                    </div>
+                </label>
+                <label class="d-flex align-items-center p-4 border rounded-3 cursor-pointer hover-card">
+                    <input type="radio" name="loan_type" value="ist" class="form-check-input me-3" style="width: 20px; height: 20px;">
+                    <div>
+                        <div class="fw-bold">Īstermiņa kredīts</div>
+                        <small class="text-muted">Patēriņa kredīts, kredītkarte (līdz 1 gadam)</small>
+                    </div>
+                </label>
+            </div>
+        </div>
+
+        <div class="step card card-q">
+            <div class="d-flex align-items-center mb-4 text-muted small fw-bold"><span class="q-num">16</span> INVESTĪCIJU PLĀNI</div>
+            <h4 class="mb-4 fw-bold">Vai Jūs plānojat sākt investēt?</h4>
+            <div class="d-grid gap-3">
+                <label class="d-flex align-items-center p-4 border rounded-3 cursor-pointer hover-card">
+                    <input type="radio" name="will_inv" value="already" class="form-check-input me-3" style="width: 20px; height: 20px;" required>
+                    <div>
+                        <div class="fw-bold">Es jau investēju</div>
+                        <small class="text-muted">Man ir aktīvs investīciju portfelis</small>
+                    </div>
+                </label>
+                <label class="d-flex align-items-center p-4 border rounded-3 cursor-pointer hover-card">
+                    <input type="radio" name="will_inv" value="ja" class="form-check-input me-3" style="width: 20px; height: 20px;">
+                    <div>
+                        <div class="fw-bold">Jā, plānoju sākt</div>
+                        <small class="text-muted">Interesē investēšana nākotnē</small>
+                    </div>
+                </label>
+                <label class="d-flex align-items-center p-4 border rounded-3 cursor-pointer hover-card">
+                    <input type="radio" name="will_inv" value="ne" class="form-check-input me-3" style="width: 20px; height: 20px;">
+                    <div>
+                        <div class="fw-bold">Nē, neplānoju</div>
+                        <small class="text-muted">Pagaidām investīcijas nav mans virziens</small>
+                    </div>
+                </label>
+            </div>
+        </div>
+
+        <div class="step card card-q">
+            <div class="d-flex align-items-center mb-4 text-muted small fw-bold"><span class="q-num">17</span> KONSULTĀCIJA</div>
+            <h4 class="mb-4 fw-bold">Vai Jūs uzskatiet Jums ir vajadzīgs finanšu pratības konsultants?</h4>
+            <div class="d-grid gap-3">
+                <label class="d-flex align-items-center p-4 border rounded-3 cursor-pointer hover-card">
+                    <input type="radio" name="need_cons" value="ne" class="form-check-input me-3" style="width: 20px; height: 20px;" required>
+                    <div>
+                        <div class="fw-bold">Nē</div>
+                        <small class="text-muted">Pārvaldīšu pats/pati</small>
+                    </div>
+                </label>
+                <label class="d-flex align-items-center p-4 border rounded-3 cursor-pointer hover-card">
+                    <input type="radio" name="need_cons" value="ja" class="form-check-input me-3" style="width: 20px; height: 20px;">
+                    <div>
+                        <div class="fw-bold">Jā</div>
+                        <small class="text-muted">Vēlos profesionālu palīdzību</small>
+                    </div>
+                </label>
+            </div>
+        </div>
+
+        <div class="d-flex justify-content-between mt-5 align-items-center">
+            <button type="button" id="prevBtn" class="btn btn-link text-muted fw-bold text-decoration-none" onclick="nextPrev(-1)">← Atpakaļ</button>
+            <button type="button" id="nextBtn" class="btn btn-navy" onclick="nextPrev(1)">Tālāk →</button>
+        </div>
+    </form>
+</div>
+
+<script>
+    let currentTab = 0;
+    const x = document.getElementsByClassName("step");
+    showTab(currentTab);
+
+    function toggleSafetyCushion() {
+        const checked = document.querySelector('input[name="has_safety_cushion"]:checked');
+        const field = document.getElementById('safety_cushion_field');
+        if (checked && checked.value === 'ja') {
+            field.style.display = 'block';
+        } else {
+            field.style.display = 'none';
+        }
+    }
+
+    function showTab(n) {
+        for(let i = 0; i < x.length; i++) {
+            x[i].classList.remove('active');
+        }
+        x[n].classList.add('active');
+        document.getElementById("prevBtn").style.visibility = (n == 0) ? "hidden" : "visible";
+        document.getElementById("nextBtn").innerHTML = (n == (x.length - 1)) ? "Iesniegt" : "Tālāk →";
+        updateProgress(n);
+    }
+
+    function validateSums() {
+        if (currentTab == 4) { // Income sum check
+            const total = parseFloat(document.getElementById('income_total').value) || 0;
+            let sum = 0;
+            let hasAnyValue = false;
+            document.querySelectorAll('.sum-inc').forEach(el => {
+                const val = parseFloat(el.value) || 0;
+                sum += val;
+                if (val > 0) hasAnyValue = true;
+            });
+            
+            // Only validate if at least one field has a value
+            if (hasAnyValue && Math.abs(total - sum) > 1) {
+                document.getElementById('income_alert').style.display = 'block';
+                document.getElementById('income_alert').innerText = `⚠️ Norādīts kopā: ${total.toFixed(2)}, bet summa ir: ${sum.toFixed(2)}`;
+                return false;
+            }
+            document.getElementById('income_alert').style.display = 'none';
+        }
+        if (currentTab == 6) { // Expenses sum check
+            const total = parseFloat(document.getElementById('expenses_total').value) || 0;
+            let sum = 0;
+            document.querySelectorAll('.sum-exp').forEach(el => sum += parseFloat(el.value) || 0);
+            if (Math.abs(total - sum) > 1) {
+                document.getElementById('expenses_alert').style.display = 'block';
+                document.getElementById('expenses_alert').innerText = `⚠️ Norādīts kopā: ${total.toFixed(2)}, bet summa ir: ${sum.toFixed(2)}`;
+                return false;
+            }
+            document.getElementById('expenses_alert').style.display = 'none';
+        }
+        return true;
+    }
+
+    function nextPrev(n) {
+        if (n == 1) {
+            if (!validateForm()) return false;
+            if (!validateSums()) return false;
+        }
+        if (currentTab >= x.length - 1 && n == 1) {
+            document.getElementById("loadingOverlay").style.display = "flex";
+            document.getElementById("quizForm").submit();
+            return false;
+        }
+        currentTab = currentTab + n;
+        showTab(currentTab);
+    }
+
+    function validateForm() {
+        let valid = true;
+        const inputs = x[currentTab].querySelectorAll(".validate");
+        inputs.forEach(input => {
+            if (input.value === "") { 
+                input.classList.add("is-invalid"); 
+                valid = false; 
+            } else { 
+                input.classList.remove("is-invalid"); 
+            }
+        });
+        
+        // Check radio buttons
+        const radios = x[currentTab].querySelectorAll('input[type="radio"]');
+        if (radios.length > 0) {
+            const radioNames = new Set();
+            radios.forEach(r => radioNames.add(r.name));
+            radioNames.forEach(name => {
+                if (!document.querySelector(`input[name="${name}"]:checked`)) {
+                    valid = false;
+                }
+            });
+        }
+        
+        return valid;
+    }
+
+    function updateProgress(n) {
+        const total = x.length;
+        const pct = ((n + 1) / total) * 100;
+        document.getElementById("p-bar").style.width = pct + "%";
+        document.getElementById("step-label").innerText = `Jautājums ${n+1} no ${total}`;
+        document.getElementById("percent-label").innerText = Math.round(pct) + "%";
+    }
+</script>
+{% endblock %}

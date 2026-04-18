@@ -1,0 +1,104 @@
+{% extends 'base.html' %}
+{% block content %}
+<style>
+    :root { --navy: #1a335d; }
+    .cancel-icon {
+        width: 100px;
+        height: 100px;
+        background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 30px;
+        font-size: 3rem;
+    }
+</style>
+
+<div class="container mt-5" style="max-width: 700px;">
+    <div class="card border-0 shadow-sm text-center py-5 px-4" style="border-radius: 24px;">
+        <div class="cancel-icon">
+            ⚠️
+        </div>
+
+        <h2 class="fw-bold mb-3" style="color: var(--navy);">Maksājums atcelts</h2>
+        
+        <p class="text-muted mb-4">
+            Jūsu maksājums tika atcelts. Nekādi līdzekļi netika ieturēti.
+        </p>
+
+        <div class="alert alert-warning d-inline-block mx-auto mb-4" style="max-width: 500px;">
+            <p class="mb-0">
+                <strong>Vai rodas jautājumi?</strong><br>
+                Mēs esam šeit, lai palīdzētu! Ja jums ir kādi jautājumi par PRO versiju vai maksājumu procesu, lūdzu, sazinieties ar mums.
+            </p>
+        </div>
+
+        <div class="d-grid gap-3 d-md-flex justify-content-center mb-4">
+            <a href="/test/" class="btn btn-lg px-5 py-3 rounded-pill fw-bold" style="background: var(--navy); color: white;">
+                Mēģināt vēlreiz →
+            </a>
+            <a href="/" class="btn btn-outline-dark btn-lg px-5 py-3 rounded-pill fw-bold">
+                Uz sākumlapu
+            </a>
+        </div>
+
+        <div class="mt-4">
+            <p class="text-muted small mb-3">
+                <strong>Atgādinājums par PRO versijas priekšrocībām:</strong>
+            </p>
+            <div class="row g-3 text-start">
+                <div class="col-md-6">
+                    <div class="d-flex align-items-start">
+                        <span class="me-2">✓</span>
+                        <span class="small">15 detalizēti jautājumi</span>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="d-flex align-items-start">
+                        <span class="me-2">✓</span>
+                        <span class="small">AI personalizēti ieteikumi</span>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="d-flex align-items-start">
+                        <span class="me-2">✓</span>
+                        <span class="small">Premium PDF eksports</span>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="d-flex align-items-start">
+                        <span class="me-2">✓</span>
+                        <span class="small">Investīciju portfeļa analīze</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="mt-5 pt-4 border-top">
+            <p class="text-muted small">
+                Vai arī varat sākt ar <a href="/test/basic/" class="fw-bold" style="color: var(--navy);">bezmaksas versiju</a>
+            </p>
+        </div>
+    </div>
+
+    <!-- Trust Badges -->
+    <div class="text-center mt-5 mb-5">
+        <p class="text-muted small mb-3">DROŠS MAKSĀJUMS</p>
+        <div class="d-flex justify-content-center flex-wrap gap-4">
+            <div class="d-flex align-items-center gap-2">
+                <span style="color: #10b981; font-size: 1.5rem;">🔒</span>
+                <span class="small fw-bold text-muted">SSL šifrēts</span>
+            </div>
+            <div class="d-flex align-items-center gap-2">
+                <span style="color: #10b981; font-size: 1.5rem;">💳</span>
+                <span class="small fw-bold text-muted">Stripe maksājumi</span>
+            </div>
+            <div class="d-flex align-items-center gap-2">
+                <span style="color: #10b981; font-size: 1.5rem;">✓</span>
+                <span class="small fw-bold text-muted">100% droši</span>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

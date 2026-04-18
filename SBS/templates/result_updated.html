@@ -1,0 +1,305 @@
+{% extends 'base.html' %}
+{% block content %}
+<style>
+    :root { --navy: #1a335d; }
+    
+    .premium-badge {
+        background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+        color: white;
+        padding: 6px 20px;
+        border-radius: 50px;
+        font-weight: 700;
+        font-size: 0.7rem;
+        letter-spacing: 0.5px;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+    }
+
+    .ai-badge {
+        background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
+        color: white;
+        padding: 4px 12px;
+        border-radius: 20px;
+        font-size: 0.7rem;
+        font-weight: 600;
+        display: inline-block;
+    }
+
+    .tip-card {
+        background: linear-gradient(135deg, #f8fafc 0%, #ffffff 100%);
+        border-left: 4px solid var(--navy);
+        border-radius: 12px;
+        padding: 20px;
+        margin-bottom: 16px;
+        transition: all 0.3s;
+    }
+
+    .tip-card:hover {
+        transform: translateX(5px);
+        box-shadow: 0 10px 30px rgba(26, 51, 93, 0.1);
+    }
+
+    .score-circle {
+        width: 200px;
+        height: 200px;
+        border-radius: 50%;
+        background: conic-gradient(
+            var(--navy) 0deg,
+            var(--navy) calc({{ score }}% * 3.6deg),
+            #e2e8f0 calc({{ score }}% * 3.6deg),
+            #e2e8f0 360deg
+        );
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+        margin: 0 auto;
+    }
+
+    .score-circle::before {
+        content: '';
+        position: absolute;
+        width: 170px;
+        height: 170px;
+        background: white;
+        border-radius: 50%;
+    }
+
+    .score-inner {
+        position: relative;
+        z-index: 1;
+        text-align: center;
+    }
+
+    .metric-card {
+        background: white;
+        border-radius: 16px;
+        padding: 24px;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+        height: 100%;
+    }
+
+    .metric-value {
+        font-size: 2rem;
+        font-weight: 800;
+        color: var(--navy);
+    }
+
+    .btn-pdf {
+        background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+        color: white;
+        padding: 14px 35px;
+        border-radius: 12px;
+        border: none;
+        font-weight: 600;
+        transition: 0.3s;
+        box-shadow: 0 4px 15px rgba(239, 68, 68, 0.3);
+    }
+
+    .btn-pdf:hover {
+        background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
+        color: white;
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(239, 68, 68, 0.4);
+    }
+</style>
+
+<div class="container mt-5" style="max-width: 900px;">
+    <!-- Header with Premium Badge -->
+    <div class="text-center mb-4">
+        <span class="premium-badge">
+            <span>✨</span> PRO ANALĪZE
+        </span>
+    </div>
+
+    <!-- Main Results Card -->
+    <div class="card border-0 shadow-sm text-center py-5 mb-5" style="border-radius: 24px; background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);">
+        <h5 class="text-muted fw-bold text-uppercase mb-4">Jūsu detalizētais rezultāts</h5>
+        
+        <div class="score-circle mb-4">
+            <div class="score-inner">
+                <div class="display-3 fw-bold" style="color: var(--navy);">{{ raw_score }}</div>
+                <div class="text-muted small">/65 punkti</div>
+            </div>
+        </div>
+
+        <div class="mb-4">
+            <span class="badge rounded-pill px-5 py-3 fw-bold fs-5"
+                  style="background-color: {% if score >= 85 %}#d1fae5{% elif score >= 62 %}#dbeafe{% elif score >= 46 %}#fef3c7{% else %}#fee2e2{% endif %};
+                         color: {% if score >= 85 %}#065f46{% elif score >= 62 %}#1e40af{% elif score >= 46 %}#92400e{% else %}#991b1b{% endif %};">
+                {{ level_text }}
+            </span>
+        </div>
+
+        <p class="text-muted mx-auto" style="max-width: 600px;">
+            Jūsu finanšu pratības līmenis ir {{ score }}% no maksimālā.
+            {% if score >= 85 %}
+                Ideāla finanšu situācija - apsveicam!
+            {% elif score >= 77 %}
+                Ļoti labs finanšu situācijas līmenis!
+            {% elif score >= 62 %}
+                Laba finanšu situācija ar izaugsmes iespējām
+            {% elif score >= 46 %}
+                Virs vidējā līmeņa - turpiniet uzlaboties!
+            {% elif score >= 31 %}
+                Vidējais līmenis - ir iespējas uzlabot
+            {% elif score >= 15 %}
+                Pamata zināšanas - mācieties tālāk
+            {% else %}
+                Nepieciešams uzlabot finanšu pārvaldību
+            {% endif %}
+        </p>
+    </div>
+
+    <!-- AI Recommendations Section -->
+    <div class="card border-0 shadow-sm p-4 p-md-5 mb-5" style="border-radius: 24px;">
+        <div class="d-flex align-items-center justify-content-between mb-4">
+            <h4 class="fw-bold mb-0" style="color: #1a335d;">
+                <span class="me-2">🤖</span> AI Personalizēti Ieteikumi
+            </h4>
+            <span class="ai-badge">Powered by AI</span>
+        </div>
+
+        <p class="text-muted small mb-4">
+            Šie ieteikumi ir ģenerēti, izmantojot mākslīgā intelekta algoritmu, kas analizēja jūsu finanšu datus un izveidoja personalizētu stratēģiju.
+        </p>
+
+        {% if tips %}
+            {% for tip in tips %}
+            <div class="tip-card">
+                <div class="d-flex align-items-start">
+                    <div class="flex-shrink-0 d-flex align-items-center justify-content-center text-white fw-bold rounded-circle me-3"
+                         style="width: 36px; height: 36px; background: linear-gradient(135deg, #1a335d 0%, #2c4a7c 100%);">
+                        {{ forloop.counter }}
+                    </div>
+                    <div class="flex-grow-1">
+                        <p class="mb-0 fw-medium" style="color: #334155; line-height: 1.6;">{{ tip|striptags }}</p>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        {% else %}
+            <div class="alert alert-warning">
+                <strong>⚠️ Paziņojums:</strong> Diemžēl neizdevās ģenerēt AI ieteikumus. Lūdzu, mēģiniet vēlreiz vēlāk.
+            </div>
+        {% endif %}
+    </div>
+
+    <!-- Key Metrics Summary -->
+    <div class="row g-4 mb-5">
+        <div class="col-md-4">
+            <div class="metric-card text-center">
+                <div class="text-muted small fw-bold mb-2">IEŅĒMUMU DIVERSIFIKĀCIJA</div>
+                <div class="metric-value">
+                    {% if score >= 70 %}Laba{% elif score >= 40 %}Vidēja{% else %}Zema{% endif %}
+                </div>
+                <div class="text-muted small mt-2">
+                    {% if score >= 70 %}
+                        Jūsu ieņēmumi nāk no dažādiem avotiem
+                    {% elif score >= 40 %}
+                        Varētu uzlabot ieņēmumu avotu daudzveidību
+                    {% else %}
+                        Ieteicams diversificēt ieņēmumus
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="metric-card text-center">
+                <div class="text-muted small fw-bold mb-2">IZDEVUMU KONTROLE</div>
+                <div class="metric-value">
+                    {% if score >= 70 %}Lieliska{% elif score >= 40 %}Laba{% else %}Uzmanību{% endif %}
+                </div>
+                <div class="text-muted small mt-2">
+                    {% if score >= 70 %}
+                        Jūs efektīvi kontrolējat izdevumus
+                    {% elif score >= 40 %}
+                        Ir vieta optimizācijai
+                    {% else %}
+                        Nepieciešama izdevumu pārskatīšana
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="metric-card text-center">
+                <div class="text-muted small fw-bold mb-2">INVESTĪCIJU POTENCIĀLS</div>
+                <div class="metric-value">
+                    {% if score >= 70 %}Augsts{% elif score >= 40 %}Vidējs{% else %}Zems{% endif %}
+                </div>
+                <div class="text-muted small mt-2">
+                    {% if score >= 70 %}
+                        Labs portfelis un stratēģija
+                    {% elif score >= 40 %}
+                        Pamats ir, var uzlabot
+                    {% else %}
+                        Sāciet ar mazām investīcijām
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- PDF Export Section -->
+    <div class="card border-0 shadow-sm p-4 mb-5" style="border-radius: 24px; background: linear-gradient(135deg, #eef2f6 0%, #ffffff 100%);">
+        <div class="row align-items-center">
+            <div class="col-md-8">
+                <h5 class="fw-bold mb-2" style="color: var(--navy);">📄 Saglabājiet savus rezultātus</h5>
+                <p class="text-muted small mb-3 mb-md-0">
+                    Lejupielādējiet profesionāli noformētu PDF dokumentu ar visiem rezultātiem un AI ieteikumiem. 
+                    Ideāli piemērots arhivēšanai vai dalīšanai ar finanšu konsultantu.
+                </p>
+            </div>
+            <div class="col-md-4 text-end">
+                <a href="/export/pdf/pro/" class="btn btn-pdf">
+                    <i class="bi bi-file-earmark-pdf"></i> Lejupielādēt PDF
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Navigation -->
+    <div class="text-center mb-5">
+        <a href="/" class="btn btn-outline-dark px-5 py-3 rounded-pill fw-bold me-3">
+            ↻ Sākt no jauna
+        </a>
+        <button onclick="window.print()" class="btn btn-outline-secondary px-5 py-3 rounded-pill fw-bold">
+            🖨️ Drukāt rezultātus
+        </button>
+    </div>
+
+    <!-- Disclaimer -->
+    <div class="text-center text-muted small mb-5">
+        <p class="mb-1">
+            ⚠️ <strong>Svarīga informācija:</strong> Šie rezultāti ir informatīvi un neaizstāj profesionālu finanšu konsultāciju.
+        </p>
+        <p>
+            Vienmēr konsultējieties ar licencētu finanšu padomnieku pirms nozīmīgu finanšu lēmumu pieņemšanas.
+        </p>
+    </div>
+</div>
+
+<style>
+    .btn-navy {
+        background-color: var(--navy);
+        color: white;
+        border-radius: 12px;
+        padding: 12px 40px;
+        border: none;
+        font-weight: 600;
+        transition: 0.3s;
+    }
+    .btn-navy:hover {
+        background-color: #2c4a7c;
+        color: white;
+        transform: translateY(-2px);
+    }
+
+    @media print {
+        .btn, nav { display: none !important; }
+    }
+</style>
+{% endblock %}
