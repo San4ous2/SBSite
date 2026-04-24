@@ -64,7 +64,9 @@ def clean_text(text):
 
 
 def home(request):
-    return render(request, 'home.html')
+    return render(request, 'home.html', {
+        'STRIPE_PUBLISHABLE_KEY': settings.STRIPE_PUBLISHABLE_KEY
+    })
 
 
 def basic_test_view(request):
