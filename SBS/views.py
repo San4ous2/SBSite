@@ -185,8 +185,8 @@ def basic_test_view(request):
             })
 
         except Exception as e:
-            logger.error(f"Basic test error: {e}")
-            return render(request, 'test_basic.html', {'error': 'Notika kļūda aprēķinos'})
+            logger.error(f"Basic test error: {e}", exc_info=True)
+            return render(request, 'test_basic.html', {'error': f'Notika kļūda aprēķinos: {str(e)}'})
 
     return render(request, 'test_basic.html')
 
@@ -505,8 +505,8 @@ IZVADE TIKAI LATVIEŠU VALODĀ:
             })
 
         except Exception as e:
-            logger.error(f"Extended test error: {e}")
-            return render(request, 'test.html', {'error': 'Notika kļūda aprēķinos'})
+            logger.error(f"Extended test error: {e}", exc_info=True)
+            return render(request, 'test.html', {'error': f'Notika kļūda aprēķinos: {str(e)}'})
 
     return render(request, 'test.html')
 
