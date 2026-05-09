@@ -37,6 +37,13 @@ CSRF_TRUSTED_ORIGINS = [
     'https://*.vercel.app',
 ]
 
+# CSRF settings for serverless deployment
+CSRF_COOKIE_SECURE = True
+CSRF_COOKIE_HTTPONLY = False
+CSRF_COOKIE_SAMESITE = 'Lax'
+SESSION_COOKIE_SECURE = True
+SESSION_COOKIE_SAMESITE = 'Lax'
+
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',

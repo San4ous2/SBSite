@@ -743,6 +743,7 @@ def export_pdf_pro(request):
 
 # ============= STRIPE PAYMENT FUNCTIONS =============
 
+@csrf_exempt
 def create_checkout_session(request):
     """Create Stripe checkout session"""
     if request.method == 'POST':
