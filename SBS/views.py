@@ -417,14 +417,52 @@ def test_view(request):
                     score += 0
 
             # --- AI RECOMMENDATIONS ---
-            # Temporarily disabled - using default recommendations
-            ai_tips = [
-                "Izveidojiet detalizētu budžetu un izsekojiet visus izdevumus",
-                "Veidojiet ārkārtas fondu 3-6 mēnešu izdevumiem",
-                "Sāciet regulāri investēt vismaz 10% no ienākumiem",
-                "Optimizējiet izdevumus - identificējiet un samaziniet nevajadzīgos tēriņus",
-                "Izglītojieties par personīgajām finansēm un investīcijām"
-            ]
+            ai_tips = []
+            if API_KEY:
+                try:
+                    genai.configure(api_key=API_KEY)
+                    model = genai.GenerativeModel('gemini-1.5-flash')
+
+                    prompt = f"""
+LOMS: Tu esi profesionāls finanšu stratēģis.
+UZDEVUMS: Sniedz 5 personalizētus, padziļinātus ieteikumus latviešu valodā, balstoties uz datiem.
+
+DATI ANALĪZEI:
+- Ieņēmumi: {income} {currency}
+- Izdevumi: {expenses} {currency}
+- Investīcijas: {total_invested_portfolio} {currency}
+- Parādi: {'Jā' if has_loan else 'Nē'}
+- Mērķis: {goal}
+
+INSTRUKCIJAS:
+1. AIZLIEGTS rakstīt ievadu (piem. "Šeit ir ieteikumi...") vai nobeigumu.
+2. KATRAM ieteikumam jābūt 2-3 teikumus garam.
+3. PIRMAIS teikums: Identificē konkrētu problēmu vai iespēju datos.
+4. OTRAIS teikums: Sniedz praktisku rīcības plānu.
+5. NEIZMANTO numerāciju (1., 2.), neizmanto emocijzīmes (emojis).
+6. Katru ieteikumu sāc jaunā rindā.
+
+IZVADE TIKAI LATVIEŠU VALODĀ:
+"""
+
+                    response = model.generate_content(prompt)
+                    tips_text = response.text.strip()
+                    tips_lines = [line.strip() for line in tips_text.split('\n') if line.strip()]
+                    ai_tips = [clean_text(tip) for tip in tips_lines if len(tip) > 10][:5]
+
+                except Exception as e:
+                    logger.error(f"AI generation error: {e}")
+                    ai_tips = []
+
+            # Fallback to default tips if AI fails or no API key
+            if not ai_tips:
+                ai_tips = [
+                    "Izveidojiet detalizētu budžetu un izsekojiet visus izdevumus",
+                    "Veidojiet ārkārtas fondu 3-6 mēnešu izdevumiem",
+                    "Sāciet regulāri investēt vismaz 10% no ienākumiem",
+                    "Optimizējiet izdevumus - identificējiet un samaziniet nevajadzīgos tēriņus",
+                    "Izglītojieties par personīgajām finansēm un investīcijām"
+                ]
 
             # --- FINAL CALCULATION ---
             max_possible_points = 65
