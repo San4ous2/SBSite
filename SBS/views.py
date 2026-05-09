@@ -21,7 +21,7 @@ import os # To handle paths correctly
 
 
 # Google AI
-from google import genai
+import google.generativeai as genai
 from django.conf import settings
 
 logger = logging.getLogger(__name__)
@@ -420,7 +420,8 @@ def test_view(request):
             ai_tips = []
             if API_KEY:
                 try:
-                    client = genai.Client(api_key=API_KEY)
+                    genai.configure(api_key=API_KEY)
+                    model = genai.GenerativeModel('gemini-1.5-flash')
 
                     prompt = f"""
 LOMS: Tu esi profesionāls finanšu stratēģis.
@@ -444,11 +445,7 @@ INSTRUKCIJAS:
 IZVADE TIKAI LATVIEŠU VALODĀ:
 """
 
-                    response = client.models.generate_content(
-                        model='models/gemini-2.5-flash',
-                        contents=prompt
-                    )
-
+                    response = model.generate_content(prompt)
                     tips_text = response.text.strip()
                     tips_lines = [line.strip() for line in tips_text.split('\n') if line.strip()]
                     ai_tips = [clean_text(tip) for tip in tips_lines if len(tip) > 10][:5]
