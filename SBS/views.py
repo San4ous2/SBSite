@@ -37,9 +37,9 @@ BOLD_FONT = os.path.join(FONT_DIR, 'DejaVuSans-Bold.ttf')
 
 # Pārbaude, vai faili eksistē (lai izvairītos no slēptām kļūdām)
 if not os.path.exists(NORMAL_FONT):
-    print(f"❌ KĻŪDA: Fails nav atrasts: {NORMAL_FONT}")
+    logger.error(f"KĻŪDA: Fails nav atrasts: {NORMAL_FONT}")
 if not os.path.exists(BOLD_FONT):
-    print(f"❌ KĻŪDA: Fails nav atrasts: {BOLD_FONT}")
+    logger.error(f"KĻŪDA: Fails nav atrasts: {BOLD_FONT}")
 
 try:
     # Reģistrējam fontus ar identiskiem nosaukumiem kā stilos
@@ -50,10 +50,9 @@ try:
     addMapping('DejaVuSans', 0, 0, 'DejaVuSans')  # Normal
     addMapping('DejaVuSans', 1, 0, 'DejaVuSans-Bold')  # Bold
 
-    print("✅ Fonti veiksmīgi piereģistrēti!")
+    logger.info("Fonti veiksmīgi piereģistrēti!")
 except Exception as e:
-    print(f"❌ KRITISKA KĻŪDA FONTU REĢISTRĀCIJĀ: {e}")
-    logger.error(f"Font registration failed: {e}")
+    logger.error(f"KRITISKA KĻŪDA FONTU REĢISTRĀCIJĀ: {e}")
 
 
 def clean_text(text):
