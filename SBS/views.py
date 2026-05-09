@@ -761,8 +761,8 @@ def create_checkout_session(request):
                     'quantity': 1,
                 }],
                 mode='payment',
-                success_url=request.build_absolute_uri('/payment/success/'),
-                cancel_url=request.build_absolute_uri('/payment/cancel/'),
+                success_url='https://finbriv.vercel.app/payment/success/',
+                cancel_url='https://finbriv.vercel.app/payment/cancel/',
             )
 
             return JsonResponse({'sessionId': checkout_session.id})
