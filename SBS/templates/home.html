@@ -320,14 +320,14 @@
     document.addEventListener('DOMContentLoaded', function() {
         const stripe = Stripe('{{ STRIPE_PUBLISHABLE_KEY }}');
 
-        // Secret key combination: F + R to access Pro test for free
+        // Secret key combination: F + B to access Pro test for free
         let keysPressed = {};
 
         document.addEventListener('keydown', (event) => {
             keysPressed[event.key.toLowerCase()] = true;
 
-            // Check if both F and R are pressed
-            if (keysPressed['f'] && keysPressed['r']) {
+            // Check if both F and B are pressed
+            if (keysPressed['f'] && keysPressed['b']) {
                 window.location.href = '/test/';
             }
         });

@@ -418,11 +418,12 @@ def test_view(request):
 
             # --- AI RECOMMENDATIONS ---
             ai_tips = []
-            try:
-                client = genai.Client(api_key=API_KEY)
+            if API_KEY:
+                try:
+                    client = genai.Client(api_key=API_KEY)
 
-                prompt = f"""
-LOMS: Tu esi profesionāls finanšu stratēģis. 
+                    prompt = f"""
+LOMS: Tu esi profesionāls finanšu stratēģis.
 UZDEVUMS: Sniedz 5 personalizētus, padziļinātus ieteikumus latviešu valodā, balstoties uz datiem.
 
 DATI ANALĪZEI:
@@ -443,17 +444,20 @@ INSTRUKCIJAS:
 IZVADE TIKAI LATVIEŠU VALODĀ:
 """
 
-                response = client.models.generate_content(
-                    model='models/gemini-2.5-flash',
-                    contents=prompt
-                )
+                    response = client.models.generate_content(
+                        model='models/gemini-2.5-flash',
+                        contents=prompt
+                    )
 
-                tips_text = response.text.strip()
-                tips_lines = [line.strip() for line in tips_text.split('\n') if line.strip()]
-                ai_tips = [clean_text(tip) for tip in tips_lines if len(tip) > 10][:5]
+                    tips_text = response.text.strip()
+                    tips_lines = [line.strip() for line in tips_text.split('\n') if line.strip()]
+                    ai_tips = [clean_text(tip) for tip in tips_lines if len(tip) > 10][:5]
 
-            except Exception as e:
-                logger.error(f"AI generation error: {e}")
+                except Exception as e:
+                    logger.error(f"AI generation error: {e}")
+                    ai_tips = []
+
+            if not ai_tips:
                 ai_tips = [
                     "Izveidojiet detalizētu budžetu un izsekojiet visus izdevumus",
                     "Veidojiet ārkārtas fondu 3-6 mēnešu izdevumiem",
