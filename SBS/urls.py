@@ -22,6 +22,7 @@ urlpatterns = [
     # Main pages
     path('', views.home, name='home'),
     path('documentation/', views.documentation, name='documentation'),
+    path('privacy/', views.privacy, name='privacy'),
 
     # Test pages
     path('test/', views.test_view, name='test'),

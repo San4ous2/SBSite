@@ -22,10 +22,23 @@
                     <li class="nav-item">
                         <a class="nav-link" href="{% url 'documentation' %}">Dokumentācija</a>
                     </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'privacy' %}">Privātums</a>
+                    </li>
                 </ul>
             </div>
         </div>
     </nav>
     {% block content %}{% endblock %}
+
+    <footer class="bg-white border-top mt-5 py-4">
+        <div class="container text-center">
+            <p class="text-muted mb-2">© 2026 Finanšu Analīze. Visi dati ir konfidenciāli.</p>
+            <p class="text-muted small">
+                <a href="{% url 'privacy' %}" class="text-decoration-none text-muted">Privātuma Politika</a> |
+                <a href="{% url 'documentation' %}" class="text-decoration-none text-muted">Dokumentācija</a>
+            </p>
+        </div>
+    </footer>
 </body>
 </html>

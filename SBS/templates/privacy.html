@@ -1,0 +1,90 @@
+{% extends 'base.html' %}
+
+{% block title %}Privātuma Politika{% endblock %}
+
+{% block content %}
+<div class="container mx-auto px-4 py-12 max-w-4xl">
+    <h1 class="text-4xl font-bold text-blue-900 mb-8">Privātuma Politika</h1>
+
+    <div class="bg-white rounded-lg shadow-lg p-8 space-y-6">
+        <section>
+            <h2 class="text-2xl font-semibold text-blue-800 mb-4">Kādu informāciju mēs vācam?</h2>
+            <p class="text-gray-700 leading-relaxed">
+                Mēs vācam <strong>tikai anonīmus finanšu datus</strong>, ko jūs ievadāt testa laikā (ieņēmumi, izdevumi, investīcijas).
+                Mēs <strong>NEKAD</strong> neprasām un neglabājam:
+            </p>
+            <ul class="list-disc list-inside text-gray-700 mt-3 space-y-2">
+                <li>Vārdu vai uzvārdu</li>
+                <li>E-pasta adresi</li>
+                <li>Telefona numuru</li>
+                <li>Adresi</li>
+                <li>Personas kodu</li>
+                <li>Bankas konta informāciju</li>
+            </ul>
+        </section>
+
+        <section>
+            <h2 class="text-2xl font-semibold text-blue-800 mb-4">Kā mēs izmantojam jūsu datus?</h2>
+            <p class="text-gray-700 leading-relaxed">
+                Jūsu finanšu dati tiek izmantoti <strong>tikai</strong> lai:
+            </p>
+            <ul class="list-disc list-inside text-gray-700 mt-3 space-y-2">
+                <li>Aprēķinātu jūsu finanšu pratības rezultātu</li>
+                <li>Ģenerētu personalizētus ieteikumus ar AI palīdzību</li>
+                <li>Izveidotu PDF atskaiti</li>
+            </ul>
+            <p class="text-gray-700 leading-relaxed mt-4">
+                Pēc testa pabeigšanas, jūsu dati tiek glabāti <strong>tikai jūsu pārlūkprogrammas sesijā</strong>
+                un tiek automātiski dzēsti, kad aizverat pārlūkprogrammu.
+            </p>
+        </section>
+
+        <section>
+            <h2 class="text-2xl font-semibold text-blue-800 mb-4">Vai mēs pārdodam jūsu datus?</h2>
+            <div class="bg-green-50 border-l-4 border-green-500 p-4">
+                <p class="text-green-900 font-bold text-xl">NĒ! Mēs NEKAD nepārdosim jūsu datus.</p>
+                <p class="text-green-800 mt-2">
+                    Mēs nedalāmies ar jūsu datiem ar trešajām personām, izņemot maksājumu apstrādi
+                    (Stripe - drošs maksājumu pakalpojums).
+                </p>
+            </div>
+        </section>
+
+        <section>
+            <h2 class="text-2xl font-semibold text-blue-800 mb-4">Maksājumu drošība</h2>
+            <p class="text-gray-700 leading-relaxed">
+                Maksājumus apstrādā <strong>Stripe</strong> - pasaules līdera maksājumu platforma.
+                Mēs <strong>nekad</strong> neredzam vai neglabājam jūsu kredītkartes informāciju.
+            </p>
+        </section>
+
+        <section>
+            <h2 class="text-2xl font-semibold text-blue-800 mb-4">Jūsu tiesības</h2>
+            <p class="text-gray-700 leading-relaxed">
+                Tā kā mēs neglabājam personīgus datus, nav nepieciešams pieprasīt datu dzēšanu.
+                Visi jūsu testa dati tiek automātiski dzēsti, kad aizverat pārlūkprogrammu.
+            </p>
+        </section>
+
+        <section>
+            <h2 class="text-2xl font-semibold text-blue-800 mb-4">Sīkdatnes (Cookies)</h2>
+            <p class="text-gray-700 leading-relaxed">
+                Mēs izmantojam tikai tehniskās sīkdatnes, lai saglabātu jūsu testa rezultātus sesijas laikā.
+                Nav reklāmas vai izsekošanas sīkdatņu.
+            </p>
+        </section>
+
+        <section>
+            <h2 class="text-2xl font-semibold text-blue-800 mb-4">Kontakti</h2>
+            <p class="text-gray-700 leading-relaxed">
+                Ja jums ir jautājumi par privātumu, lūdzu, sazinieties ar mums:
+                <a href="mailto:info@finansupratiba.lv" class="text-blue-600 hover:underline">info@finansupratiba.lv</a>
+            </p>
+        </section>
+
+        <p class="text-gray-500 text-sm mt-8">
+            Pēdējās izmaiņas: 2026-05-09
+        </p>
+    </div>
+</div>
+{% endblock %}

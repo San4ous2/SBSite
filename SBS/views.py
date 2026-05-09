@@ -789,6 +789,11 @@ def documentation(request):
     return render(request, 'documentation.html')
 
 
+def privacy(request):
+    """Privacy policy page"""
+    return render(request, 'privacy.html')
+
+
 def download_pdf(request, filename):
     """Allow users to download PDF files from the pdfs folder"""
     import urllib.parse

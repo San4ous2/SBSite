@@ -34,6 +34,7 @@ ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', '*').split(',')
 CSRF_TRUSTED_ORIGINS = [
     'https://*.ngrok-free.dev',
     'https://*.onrender.com',
+    'https://*.vercel.app',
 ]
 
 INSTALLED_APPS = [
